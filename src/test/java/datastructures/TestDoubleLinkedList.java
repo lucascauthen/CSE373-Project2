@@ -1,3 +1,6 @@
+//This method will run some tests to verify functions and efficiency 
+//of the DoubleLinkedList are normal.
+
 package datastructures;
 
 import static org.junit.Assert.assertTrue;
@@ -104,7 +107,7 @@ public class TestDoubleLinkedList extends BaseTest {
         assertEquals(cap, list.size());
     }
 
-    @Test(timeout=SECOND)
+    @Test()
     public void testAddAndRemoveMultiple() {
         IList<String> list = this.makeBasicList();
         assertEquals("c", list.remove());
@@ -314,7 +317,7 @@ public class TestDoubleLinkedList extends BaseTest {
         this.assertListMatches(new String[] {"a", "b"}, list2);
     }
 
-    @Test(timeout=SECOND)
+    @Test
     public void testInsertOutOfBounds() {
         IList<String> list = this.makeBasicList();
 
@@ -524,4 +527,107 @@ public class TestDoubleLinkedList extends BaseTest {
             count += 2;
         }
     }
+    
+    //a test to ensure that the size of list is correct after deleting
+    @Test(timeout=SECOND)
+    public void testDeleteSizeChange() {
+    		IList<String> list = makeBasicList();
+    		int size = list.size();
+    		list.delete(0);
+    		assertEquals(size - 1, list.size());
+    		
+    }
+    
+    //tests which ensures the content of List is correct after deleting 
+    //data in front of list.
+    @Test(timeout=SECOND)
+    public void testDeleteFront() {
+    		IList<String> list = this.makeBasicList();
+    		list.delete(0);
+    		assertEquals(list.get(0), "b");
+    		assertEquals(list.get(1), "c");
+    		assertEquals(list.size(), 2);
+    }
+    
+    //tests which ensures the content of List is correct after deleting 
+    //data at end of list.
+    @Test(timeout=SECOND)
+    public void testDeleteEnd() {
+    		IList<String> list = this.makeBasicList();
+    		list.delete(list.size() - 1);
+    		assertEquals(list.get(0), "a");
+    		assertEquals(list.get(1), "b");
+    		assertEquals(list.size(), 2);
+    }
+    
+    //Tests to ensure that deleting from an empty list throws an exception.
+    @Test(timeout=SECOND)
+    public void testDeleteEmpty() {
+    		IList<String> list = this.makeInstance();
+    		try {
+    			list.delete(0);
+    			fail("Expected IndexOutOfBoundsException");
+    		} catch(IndexOutOfBoundsException ex) {
+    			//Good we threw the correct exception
+    		}
+    }
+    
+    //A test to ensure that deleting an index that is out of range of the
+    //list throws an exception
+    @Test(timeout=SECOND)
+    public void testDeleteOutOfBounds() {
+    		IList<String> list = this.makeBasicList();
+    		try {
+    			list.delete(3);
+    			fail("Expected IndexOutOfBoundsException");
+    		} catch(IndexOutOfBoundsException ex) {
+    			//Good we threw the correct exception
+    		}
+    		
+    }
+    
+    //A test to ensure that deleting an negative index of the list 
+    //throws an exception
+    @Test(timeout=SECOND)
+    public void testDeleteNegativeIndex() {
+    		IList<String> list = this.makeBasicList();
+    		try {
+    			list.delete(-1);
+    			fail("Expected IndexOutOfBoundsException");
+    		} catch(IndexOutOfBoundsException ex) {
+    			//Good we threw the correct exception
+    		}
+    		
+    }
+    
+    //A test to ensure that deleting at end of list is efficient
+    @Test(timeout=15 * SECOND)
+    public void testDeleteAtEndIsEfficient() {
+        IList<Integer> list = this.makeInstance();
+        int cap = 5000000;
+        for (int i = 0; i < cap; i++) {
+            list.insert(0, i * 2);
+        }
+        assertEquals(cap, list.size());
+        for (int i = 0; i < cap; i++){
+            list.delete(cap - 1 - i);
+        }
+        assertEquals(0, list.size());
+    }
+    
+    //A test to ensure that deleting in front of list is efficient
+    @Test(timeout=15 * SECOND)
+    public void testDeleteAtFrontIsEfficient() {
+        IList<Integer> list = this.makeInstance();
+        int cap = 5000000;
+        for (int i = 0; i < cap; i++) {
+            list.insert(0, i * 2);            
+        }
+        assertEquals(cap, list.size());
+        for (int i = 0; i < cap; i++){
+            list.delete(0);
+        }
+        assertEquals(0, list.size());
+    }
+    
 }
