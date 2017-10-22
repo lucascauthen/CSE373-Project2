@@ -145,7 +145,24 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
         }
     }
     
-    @Override
-    public Iterator<KVPair<K, V>> iterator() {
-        throw new NotYetImplementedException();
+	@Override
+	public Iterator<KVPair<K, V>> iterator() {
+		return new SetIterator();
+	}
+
+	private class SetIterator<T> implements Iterator<KVPair<K, V>> {
+		private int currentIndex = 0;
+
+		public boolean hasNext() {
+			return currentIndex < size;
+		}
+
+		public KVPair<K, V> next() {
+			if (hasNext()) {
+				int oldIndex = currentIndex;
+				currentIndex++;
+				return new KVPair(pairs[oldIndex].key, pairs[oldIndex].value);
+			}
+		}
+	}
 }
