@@ -5,6 +5,8 @@ package datastructures.concrete.dictionaries;
 import datastructures.interfaces.IDictionary;
 import misc.exceptions.NoSuchKeyException;
 import misc.exceptions.NotYetImplementedException;
+import datastructures.concrete.KVPair;
+import java.util.Iterator;
 
 /**
  * See IDictionary for more details on what this class should do
