@@ -328,7 +328,7 @@ public abstract class TestDictionary extends BaseTest {
         }
     }
 
-    @Test//(timeout=SECOND)
+    @Test(timeout=SECOND)
     public void testIterator() {
         IDictionary<String, Integer> dict = this.newDictionary();
         IDictionary<String, Integer> copy = this.newDictionary();

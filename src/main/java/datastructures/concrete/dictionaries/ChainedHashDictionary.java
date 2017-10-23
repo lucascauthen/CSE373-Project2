@@ -103,32 +103,18 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 		return 0;
     }
     
-    public int sizeofChains() {
-    		int sum = 0;
-    		for(int i = 0; i < chains.length; i++) {
-    			if(chains[i] != null) {
-    				sum += chains[i].size();
-    			}
-    		}
-    		return sum;
-    }
-    
     private void resizeIfNeeded() {
     		if(size > 10 * chains.length) { 
-    			System.out.print("Start size: " + size + ". End Size: ");
+    			System.out.println("Start size: " + size);
     			//Need to make the dictionary larger (if we can)
     			IDictionary<K, V>[] newChains = makeArrayOfChains(chains.length * 2);
-    			Iterator<KVPair<K, V>> iterator = this.iterator();
-    			int count = 0;
-    			while(iterator.hasNext()) {
-    				KVPair<K, V> item = iterator.next();
+    			for(KVPair<K, V> item : this) {
     				int index = getHashCodeForKey(item.getKey(), newChains.length);
-    				newChains[index] = new ArrayDictionary<K, V>();
+    				if(newChains[index] == null) {
+    					newChains[index] = new ArrayDictionary<K, V>();
+    				}
     				newChains[index].put(item.getKey(), item.getValue());
-    				count++;
     			}
-    			System.out.print(count);
-    			System.out.println();
     			chains = newChains;
     		}
     		//Don't need to do anything if we didn't resize
