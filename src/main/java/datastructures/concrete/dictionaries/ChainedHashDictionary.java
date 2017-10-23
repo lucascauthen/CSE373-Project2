@@ -15,11 +15,14 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
     // You may not change or rename this field: we will be inspecting
     // it using our private tests.
     private IDictionary<K, V>[] chains;
+    private int size;
+    private static final int MIN_SIZE = 16;
 
     // You're encouraged to add extra fields (and helper methods) though!
 
     public ChainedHashDictionary() {
-        throw new NotYetImplementedException();
+    		size = 0; 
+        chains = makeArrayOfChains(MIN_SIZE); 
     }
 
     /**
@@ -38,33 +41,97 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 
     @Override
     public V get(K key) {
-        throw new NotYetImplementedException();
+        int i = getHashCodeForKey(key);
+        if(this.containsKey(key)) {
+        		return chains[i].get(key);
+        }
+        throw new NoSuchKeyException();
     }
 
     @Override
     public void put(K key, V value) {
-        throw new NotYetImplementedException();
+        int i = getHashCodeForKey(key);
+        if(chains[i] == null) {
+        		chains[i] = new ArrayDictionary<K, V>();
+        }
+        if(!chains[i].containsKey(key)) {
+        		size++;
+        }
+        chains[i].put(key, value);
+        resizeIfNeeded();
     }
 
     @Override
     public V remove(K key) {
-        throw new NotYetImplementedException();
+        int i = getHashCodeForKey(key);
+        if(this.containsKey(key)) {
+        		V item = chains[i].remove(key);
+        		size--;
+        		return item;
+        } 
+        throw new NoSuchKeyException();
     }
 
     @Override
     public boolean containsKey(K key) {
-        throw new NotYetImplementedException();
+    	 	int i = getHashCodeForKey(key);
+    	 	if(chains[i] != null && chains[i].containsKey(key)) {
+    	 		return true;
+    	 	}
+    	 	return false;
     }
 
     @Override
     public int size() {
-        throw new NotYetImplementedException();
+        return size;
     }
 
     @Override
     public Iterator<KVPair<K, V>> iterator() {
         // Note: you do not need to change this method
         return new ChainedIterator<>(this.chains);
+    }
+    
+    private int getHashCodeForKey(K key) {
+    		return getHashCodeForKey(key, chains.length);
+    }
+    
+    private int getHashCodeForKey(K key, int mod) {
+		if(key != null) {
+			return Math.abs(key.hashCode() % mod);
+		}
+		return 0;
+    }
+    
+    public int sizeofChains() {
+    		int sum = 0;
+    		for(int i = 0; i < chains.length; i++) {
+    			if(chains[i] != null) {
+    				sum += chains[i].size();
+    			}
+    		}
+    		return sum;
+    }
+    
+    private void resizeIfNeeded() {
+    		if(size > 10 * chains.length) { 
+    			System.out.print("Start size: " + size + ". End Size: ");
+    			//Need to make the dictionary larger (if we can)
+    			IDictionary<K, V>[] newChains = makeArrayOfChains(chains.length * 2);
+    			Iterator<KVPair<K, V>> iterator = this.iterator();
+    			int count = 0;
+    			while(iterator.hasNext()) {
+    				KVPair<K, V> item = iterator.next();
+    				int index = getHashCodeForKey(item.getKey(), newChains.length);
+    				newChains[index] = new ArrayDictionary<K, V>();
+    				newChains[index].put(item.getKey(), item.getValue());
+    				count++;
+    			}
+    			System.out.print(count);
+    			System.out.println();
+    			chains = newChains;
+    		}
+    		//Don't need to do anything if we didn't resize
     }
 
     /**
@@ -105,19 +172,43 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
      */
     private static class ChainedIterator<K, V> implements Iterator<KVPair<K, V>> {
         private IDictionary<K, V>[] chains;
+        private int curChain;
+        private Iterator<KVPair<K, V>> curChainIterator;
 
         public ChainedIterator(IDictionary<K, V>[] chains) {
             this.chains = chains;
+            this.curChain = getNextChainIndex(0);
+            if(this.curChain != -1) {
+            		curChainIterator = chains[curChain].iterator();
+            }
         }
 
         @Override
         public boolean hasNext() {
-            throw new NotYetImplementedException();
+            if(curChainIterator != null && curChainIterator.hasNext()) {
+            		return true;
+            } else if(curChain != -1 && (curChain = getNextChainIndex(curChain + 1)) != -1) { //Move to next chain with item (if possible)
+            		this.curChainIterator = chains[curChain].iterator();
+            		return true;
+            }
+            return false;
         }
 
         @Override
         public KVPair<K, V> next() {
-            throw new NotYetImplementedException();
+            if(this.hasNext()) {
+            		return curChainIterator.next();
+            }
+            throw new NoSuchElementException();
+        }
+        
+        private int getNextChainIndex(int start) {
+        		for(int i = start; i < chains.length; i++) {
+        			if(chains[i] != null && chains[i].size() > 0) {
+        				return i;
+        			}
+        		}
+        		return -1;
         }
     }
 }

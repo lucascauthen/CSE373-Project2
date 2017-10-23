@@ -7,6 +7,7 @@ import misc.exceptions.NoSuchKeyException;
 import misc.exceptions.NotYetImplementedException;
 import datastructures.concrete.KVPair;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * See IDictionary for more details on what this class should do
@@ -96,6 +97,7 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
     			for(int i = index; i < size - 1; i++) {
     				pairs[i] = pairs[i+1];
     			}
+    			pairs[size - 1] = null; //Hard delete last item
     			size--;
     			return value;
     		} else {
@@ -147,11 +149,16 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
     
 	@Override
 	public Iterator<KVPair<K, V>> iterator() {
-		return new SetIterator();
+		return new DictonaryIterator<KVPair<K, V>>(pairs);
 	}
 
-	private class SetIterator<T> implements Iterator<KVPair<K, V>> {
+	private class DictonaryIterator<T> implements Iterator<KVPair<K, V>> {
 		private int currentIndex = 0;
+		private Pair<K, V>[] pairs;
+		
+		public DictonaryIterator(Pair<K, V>[] pairs) {
+			this.pairs = pairs;
+		}
 
 		public boolean hasNext() {
 			return currentIndex < size;
@@ -160,9 +167,11 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
 		public KVPair<K, V> next() {
 			if (hasNext()) {
 				int oldIndex = currentIndex;
+				KVPair<K, V> pair =  new KVPair<K, V>(pairs[oldIndex].key, pairs[oldIndex].value);
 				currentIndex++;
-				return new KVPair(pairs[oldIndex].key, pairs[oldIndex].value);
+				return pair;
 			}
+			throw new NoSuchElementException();
 		}
 	}
 }
