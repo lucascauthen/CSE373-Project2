@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * See ISet for more details on what each method is supposed to do.
+ * Represent a data structure that stores unique collection of items
  */
 public class ChainedHashSet<T> implements ISet<T> {
     // This should be the only field you need
@@ -19,6 +19,11 @@ public class ChainedHashSet<T> implements ISet<T> {
         this.map = new ChainedHashDictionary<>();
     }
 
+    /**
+     * Pass an T object as parameter 
+     * Adds the given item to the set.
+     * If the item is already in the list, it does nothing
+     */
     @Override
     public void add(T item) {
         if(!map.containsKey(item)) {
@@ -26,6 +31,10 @@ public class ChainedHashSet<T> implements ISet<T> {
         }
     }
 
+    /**
+     * Pass a T object as parameter
+     * Removes the given item from the data structure.
+     */
     @Override
     public void remove(T item) {
     		if(!map.containsKey(item)) {
@@ -37,17 +46,28 @@ public class ChainedHashSet<T> implements ISet<T> {
 //        }
 //        throw new NoSuchElementException();
     }
-
+    
+    /**
+     * Pass an T object as a Parameter
+     * return true if the data structure contains the given object
+     * false otherwise
+     */
     @Override
     public boolean contains(T item) {
         return map.containsKey(item);
     }
 
+    /**
+     * return the size of data structure
+     */
     @Override
     public int size() {
         return map.size();
     }
 
+    /**
+     * Returns a list of all data pairs contained within this data structure
+     */
     @Override
     public Iterator<T> iterator() {
         return new SetIterator<>(this.map.iterator());
@@ -60,12 +80,19 @@ public class ChainedHashSet<T> implements ISet<T> {
         public SetIterator(Iterator<KVPair<T, Boolean>> iter) {
             this.iter = iter;
         }
-
+        
+		/**
+		 * Returns 'true' if the iterator still has elements to look at; returns 'false'
+		 * otherwise.
+		 */
         @Override
         public boolean hasNext() {
             return iter.hasNext();
         }
-
+        
+		/**
+		 * Returns the next item in the iteration
+		 */
         @Override
         public T next() {
             return iter.next().getKey();

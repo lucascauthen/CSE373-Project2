@@ -8,17 +8,13 @@ import misc.exceptions.NotYetImplementedException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/**
- * See the spec and IDictionary for more details on what each method should do
- */
+
+//Represents a data structure that contains a bunch of key-value mappings. Each key must be unique.
 public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
-    // You may not change or rename this field: we will be inspecting
-    // it using our private tests.
     private IDictionary<K, V>[] chains;
     private int size;
     private static final int MIN_SIZE = 16;
 
-    // You're encouraged to add extra fields (and helper methods) though!
 
     public ChainedHashDictionary() {
     		size = 0; 
@@ -33,12 +29,14 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
      */
     @SuppressWarnings("unchecked")
     private IDictionary<K, V>[] makeArrayOfChains(int size) {
-        // Note: You do not need to modify this method.
-        // See ArrayDictionary's makeArrayOfPairs(...) method for
-        // more background on why we need this method.
         return (IDictionary<K, V>[]) new IDictionary[size];
     }
 
+    /**
+     * Pass a K object as a parameter 
+     * Returns the value corresponding to the given key.
+     * throw NoSuchKeyException if the given key is not in the data structure 
+     */
     @Override
     public V get(K key) {
         int i = getHashCodeForKey(key);
@@ -48,6 +46,12 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
         throw new NoSuchKeyException();
     }
 
+    /**
+     * Pass a K and a V as parameters and put K-V pairs into the data structure
+     * If the K already exists in data structure, replace its value with V
+     * if the size of data structure is too small to fit new data, the size
+     * will be expanded.
+     */
     @Override
     public void put(K key, V value) {
         int i = getHashCodeForKey(key);
@@ -61,6 +65,11 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
         resizeIfNeeded();
     }
 
+    /**
+     *  Pass a K object as  parameter 
+     *  Remove the K-V pair corresponding to the given key from the data structure.
+     *  Throw NoSuchKeyException if the given K is not in data structure
+     */
     @Override
     public V remove(K key) {
         int i = getHashCodeForKey(key);
@@ -72,6 +81,10 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
         throw new NoSuchKeyException();
     }
 
+    /**
+     * Pass an object K as parameter. Return True if data structure contains the K.
+     * False otherwise.
+     */
     @Override
     public boolean containsKey(K key) {
     	 	int i = getHashCodeForKey(key);
@@ -81,11 +94,17 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
     	 	return false;
     }
 
+    /**
+     * return the size of data structure
+     */
     @Override
     public int size() {
         return size;
     }
 
+    /**
+     * Returns a list of all key-value pairs within this data structure
+     */
     @Override
     public Iterator<KVPair<K, V>> iterator() {
         // Note: you do not need to change this method
@@ -103,9 +122,13 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 		return 0;
     }
     
+    /**
+     * check the size of HashDictionary. If there are too much data inside the 
+     * HashDictionary, create a a larger dictionary and move data in old dictionary
+     * to new dictionary 
+     */
     private void resizeIfNeeded() {
     		if(size > 10 * chains.length) { 
-    			System.out.println("Start size: " + size);
     			//Need to make the dictionary larger (if we can)
     			IDictionary<K, V>[] newChains = makeArrayOfChains(chains.length * 2);
     			for(KVPair<K, V> item : this) {

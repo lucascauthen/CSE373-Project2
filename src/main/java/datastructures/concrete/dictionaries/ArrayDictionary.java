@@ -147,6 +147,8 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
         }
     }
     
+    // Returns a list of all K-V dictionary pairs 
+    // within this data structure
 	@Override
 	public Iterator<KVPair<K, V>> iterator() {
 		return new DictonaryIterator<KVPair<K, V>>(pairs);
