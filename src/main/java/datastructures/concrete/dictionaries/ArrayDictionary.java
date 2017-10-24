@@ -162,10 +162,13 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
 			this.pairs = pairs;
 		}
 
+		// return true if the dictionary has more K-V pairs. False Otherwise
 		public boolean hasNext() {
 			return currentIndex < size;
 		}
 
+		// Return the next item in the iteration
+		// throw NoSuchElementException if next item does not exist.
 		public KVPair<K, V> next() {
 			if (hasNext()) {
 				int oldIndex = currentIndex;
