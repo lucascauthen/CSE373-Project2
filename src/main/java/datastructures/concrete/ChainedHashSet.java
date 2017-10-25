@@ -3,12 +3,10 @@ package datastructures.concrete;
 import datastructures.concrete.dictionaries.ChainedHashDictionary;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.ISet;
-import misc.exceptions.NotYetImplementedException;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-// Represent a data structure that stores unique collection of items
+// Represent a data structure that stores unique set of items
 
 public class ChainedHashSet<T> implements ISet<T> {
 	// This should be the only field you need

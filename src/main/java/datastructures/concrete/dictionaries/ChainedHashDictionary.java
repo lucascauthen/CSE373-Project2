@@ -3,10 +3,7 @@ package datastructures.concrete.dictionaries;
 import datastructures.concrete.KVPair;
 import datastructures.interfaces.IDictionary;
 import misc.exceptions.NoSuchKeyException;
-import misc.exceptions.NotYetImplementedException;
-
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 // Represents a data structure that contains a bunch of key-value
 // mappings. Each key must be unique.
@@ -110,10 +107,10 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 	}
 
 	// check the size of HashDictionary. If there are too much data inside the
-	// HashDictionary, create a a larger dictionary and move data in old dictionary
-	// to new dictionary
+	// HashDictionary, create a larger dictionary and move data in old dictionary
+	// to new dictionary in order to preserve lookup efficiency
 	private void resizeIfNeeded() {
-		if (size > 10 * chains.length) {
+		if (size > 10 * chains.length) { //
 			// Need to make the dictionary larger (if we can)
 			IDictionary<K, V>[] newChains = makeArrayOfChains(chains.length * 2);
 			for (KVPair<K, V> item : this) {
@@ -128,45 +125,13 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 		// Don't need to do anything if we didn't resize
 	}
 
-	/**
-	 * Hints:
-	 *
-	 * 1. You should add extra fields to keep track of your iteration state. You can
-	 * add as many fields as you want. If it helps, our reference implementation
-	 * uses three (including the one we gave you).
-	 *
-	 * 2. Before you try and write code, try designing an algorithm using pencil and
-	 * paper and run through a few examples by hand.
-	 *
-	 * 3. Think about what exactly your *invariants* are. An *invariant* is
-	 * something that must *always* be true once the constructor is done setting up
-	 * the class AND must *always* be true both before and after you call any method
-	 * in your class.
-	 *
-	 * Once you've decided, write them down in a comment somewhere to help you
-	 * remember.
-	 *
-	 * You may also find it useful to write a helper method that checks your
-	 * invariants and throws an exception if they're violated. You can then call
-	 * this helper method at the start and end of each method if you're running into
-	 * issues while debugging.
-	 *
-	 * (Be sure to delete this method once your iterator is fully working.)
-	 *
-	 * Implementation restrictions:
-	 *
-	 * 1. You **MAY NOT** create any new data structures. Iterators are meant to be
-	 * lightweight and so should not be copying the data contained in your
-	 * dictionary to some other data structure.
-	 *
-	 * 2. You **MAY** call the `.iterator()` method on each IDictionary instance
-	 * inside your 'chains' array, however.
-	 */
+	//Class used to iterate through the items in a ChainedHashDictionary object
 	private static class ChainedIterator<K, V> implements Iterator<KVPair<K, V>> {
-		private IDictionary<K, V>[] chains;
-		private int curChain;
-		private Iterator<KVPair<K, V>> curChainIterator;
+		private IDictionary<K, V>[] chains; //List of chains in the ChainedHashDictionary
+		private int curChain; //Tracks the current chain in the chain array
+		private Iterator<KVPair<K, V>> curChainIterator; //Stores the iterator to the current chain
 
+		//Setup the ChainedIterator
 		public ChainedIterator(IDictionary<K, V>[] chains) {
 			this.chains = chains;
 			this.curChain = getNextChainIndex(0);
@@ -175,13 +140,17 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 			}
 		}
 
+		// Returns true if there is another item in the data structure that can
+		// be returned by the next() function
+		// Returns false otherwise
 		@Override
 		public boolean hasNext() {
 			if (curChainIterator != null && curChainIterator.hasNext()) {
+				//If the curChainIterator is setup and has a value ready to return
 				return true;
-			} else if (curChain != -1 && (curChain = getNextChainIndex(curChain + 1)) != -1) { // Move to next chain
-																								// with item (if
-																								// possible)
+			} else if (curChain != -1 && (curChain = getNextChainIndex(curChain + 1)) != -1) { 
+				//If all the chains have not been iterated over and there is 
+				// another chain (with elements) after the last chain we searched to iterate over
 				this.curChainIterator = chains[curChain].iterator();
 				return true;
 			}
@@ -189,7 +158,7 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 		}
 
 		// Return the next item in the iteration
-		// throw NoSuchElementException if next item does not exist.
+		// throw NoSuchElementException if a next item does not exist.
 		@Override
 		public KVPair<K, V> next() {
 			if (this.hasNext()) {
@@ -198,7 +167,11 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 			throw new NoSuchElementException();
 		}
 
-		
+		// Updates the state of the objects used to track the current iteration.
+		// Takes in a start value for which chain to start searching from.
+		// Returns the first index of a chain (including the start index)
+		// that has item(s) to iterate over.
+		// Returns -1 otherwise.
 		private int getNextChainIndex(int start) {
 			for (int i = start; i < chains.length; i++) {
 				if (chains[i] != null && chains[i].size() > 0) {

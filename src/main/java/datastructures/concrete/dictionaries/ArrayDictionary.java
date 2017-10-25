@@ -4,7 +4,6 @@ package datastructures.concrete.dictionaries;
 
 import datastructures.interfaces.IDictionary;
 import misc.exceptions.NoSuchKeyException;
-import misc.exceptions.NotYetImplementedException;
 import datastructures.concrete.KVPair;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -19,12 +18,12 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
 
     // You're encouraged to add extra fields (and helper methods) though!
     private int size;		// size of array
-    private int arraySize;	// maximum size of the array
+    private int arrayMax;	// maximum size of the array
 
     public ArrayDictionary() {
         size = 0;		//set the default size of array as 0 				
-        arraySize = 10;	//set the default maximum size of array as 10
-        pairs = makeArrayOfPairs(arraySize);
+        arrayMax = 10;	//set the default maximum size of array as 10
+        pairs = makeArrayOfPairs(arrayMax);
     }
 
     /**
@@ -67,7 +66,7 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
     //will be created
     @Override
     public void put(K key, V value) {
-        if(size < arraySize) {
+        if(size < arrayMax) {
         		int index = this.indexOf(key);
         		if(index != -1) {
         			pairs[index] = new Pair<>(key, value); //Change a key that already exists, does not modify size
@@ -76,8 +75,8 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
         			size++;
         		}
         } else { //Need to resize and copy everything over to the new array
-        		arraySize *= 2;
-        		Pair<K, V>[] newArray = makeArrayOfPairs(arraySize);
+        		arrayMax *= 2;
+        		Pair<K, V>[] newArray = makeArrayOfPairs(arrayMax);
         		for(int i = 0; i < this.size; i++) {
         			newArray[i] = pairs[i];
         		}

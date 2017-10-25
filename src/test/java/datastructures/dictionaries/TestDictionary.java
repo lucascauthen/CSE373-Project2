@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import misc.BaseTest;
 import datastructures.concrete.KVPair;
-import datastructures.concrete.dictionaries.ChainedHashDictionary;
 import datastructures.interfaces.IDictionary;
 import misc.exceptions.NoSuchKeyException;
 import org.junit.Test;
